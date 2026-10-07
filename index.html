@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoReto Cajamarca: ¡Salvemos nuestro ambiente!</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #dff7e3, #b8e8c0, #e9f8df);
+      color: #174d2b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 850px;
+      background: white;
+      border-radius: 25px;
+      box-shadow: 0 12px 35px rgba(0, 70, 30, 0.18);
+      overflow: hidden;
+    }
+
+    /* CABECERA */
+    .cabecera {
+      background: linear-gradient(135deg, #16834b, #0b6035);
+      color: white;
+      padding: 25px;
+      text-align: center;
+    }
+
+    .cabecera h1 {
+      font-size: clamp(25px, 5vw, 40px);
+      margin-bottom: 8px;
+    }
+
+    .cabecera p {
+      font-size: 17px;
+      opacity: 0.95;
+    }
+
+    /* PANTALLAS */
+    .pantalla {
+      padding: 35px;
+    }
+
+    .oculto {
+      display: none;
+    }
+
+    /* INICIO */
+    .inicio {
+      text-align: center;
+      padding: 45px 30px;
+    }
+
+    .emoji {
+      font-size: 75px;
+      margin-bottom: 15px;
+    }
+
+    .inicio h2 {
+      color: #11713d;
+      font-size: 30px;
+      margin-bottom: 15px;
+    }
+
+    .inicio p {
+      color: #456;
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    /* BOTONES */
+    button {
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .boton-principal {
+      background: #16834b;
+      color: white;
+      padding: 16px 35px;
+      border-radius: 12px;
+      font-size: 19px;
+      font-weight: bold;
+      box-shadow: 0 5px 0 #0b6035;
+    }
+
+    .boton-principal:hover {
+      background: #1b9a58;
+      transform: translateY(-2px);
+    }
+
+    .boton-principal:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #0b6035;
+    }
+
+    /* INFORMACIÓN DEL JUEGO */
+    .reglas {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 25px 0;
+    }
+
+    .regla {
+      background: #f0faf2;
+      padding: 15px 8px;
+      border-radius: 14px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .regla span {
+      display: block;
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    /* BARRA DE PROGRESO */
+    .informacion {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      font-weight: bold;
+      color: #28643e;
+    }
+
+    .barra {
+      width: 100%;
+      height: 12px;
+      background: #dceee0;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 25px;
+    }
+
+    .progreso {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #19a35c, #8bcf42);
+      border-radius: 20px;
+      transition: width 0.4s;
+    }
+
+    /* TARJETA DE PREGUNTA */
+    .tarjeta {
+      background: #f9fffa;
+      border: 2px solid #d9efdc;
+      border-radius: 20px;
+      padding: 28px;
+    }
+
+    .categoria {
+      display: inline-block;
+      background: #dff5e4;
+      color: #11713d;
+      padding: 7px 13px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .pregunta {
+      font-size: clamp(21px, 4vw, 28px);
+      line-height: 1.35;
+      margin-bottom: 25px;
+      color: #174d2b;
+    }
+
+    .opciones {
+      display: grid;
+      gap: 13px;
+    }
+
+    .opcion {
+      width: 100%;
+      text-align: left;
+      padding: 17px;
+      border-radius: 12px;
+      border: 2px solid #cde6d2;
+      background: white;
+      color: #254b32;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .opcion:hover:not(:disabled) {
+      background: #eaf8ed;
+      border-color: #4caf6b;
+      transform: translateX(3px);
+    }
+
+    .opcion.correcta {
+      background: #d8f5df;
+      border-color: #239b50;
+      color: #14632f;
+    }
+
+    .opcion.incorrecta {
+      background: #ffe1e1;
+      border-color: #df5151;
+      color: #9b2222;
+    }
+
+    .opcion:disabled {
+      cursor: default;
+    }
+
+    /* RETROALIMENTACIÓN */
+    .feedback {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: bold;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .feedback.correcto {
+      display: block;
+      background: #e1f7e6;
+      color: #16652f;
+      border-left: 5px solid #25a552;
+    }
+
+    .feedback.incorrecto {
+      display: block;
+      background: #ffe8e8;
+      color: #9d2525;
+      border-left: 5px solid #dc4949;
+    }
+
+    .siguiente {
+      margin-top: 18px;
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      background: #f0a928;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      display: none;
+    }
+
+    .siguiente:hover {
+      background: #e49616;
+    }
+
+    /* RESULTADO */
+    .resultado {
+      text-align: center;
+      padding: 50px 30px;
+    }
+
+    .resultado-icono {
+      font-size: 80px;
+      margin-bottom: 15px;
+    }
+
+    .resultado h2 {
+      color: #11713d;
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+
+    .puntaje-final {
+      background: #e8f8eb;
+      border-radius: 18px;
+      padding: 25px;
+      margin: 25px auto;
+      max-width: 350px;
+    }
+
+    .numero {
+      font-size: 55px;
+      font-weight: bold;
+      color: #16834b;
+    }
+
+    .mensaje-final {
+      font-size: 19px;
+      line-height: 1.5;
+      color: #456;
+      margin-bottom: 25px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 650px) {
+      body {
+        padding: 10px;
+      }
+
+      .pantalla {
+        padding: 20px;
+      }
+
+      .inicio {
+        padding: 30px 15px;
+      }
+
+      .reglas {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .tarjeta {
+        padding: 20px;
+      }
+
+      .opcion {
+        padding: 15px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .reglas {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .regla {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="contenedor">
+
+    <header class="cabecera">
+      <h1>🌎 EcoReto Cajamarca</h1>
+      <p>¡Salvemos nuestro ambiente!</p>
+    </header>
+
+    <!-- PANTALLA DE INICIO -->
+    <section id="inicio" class="pantalla inicio">
+
+      <div class="emoji">🌱♻️💧🌤️</div>
+
+      <h2>¡Bienvenido al EcoReto!</h2>
+
+      <p>
+        Pon a prueba tus conocimientos sobre el cuidado del ambiente.
+        Aprende sobre reciclaje, reducción de residuos, cuidado del agua
+        y protección del aire mientras acumulas puntos.
+      </p>
+
+      <div class="reglas">
+        <div class="regla">
+          <span>♻️</span>
+          Reciclaje
+        </div>
+
+        <div class="regla">
+          <span>🗑️</span>
+          Menos residuos
+        </div>
+
+        <div class="regla">
+          <span>💧</span>
+          Cuidado del agua
+        </div>
+
+        <div class="regla">
+          <span>🌬️</span>
+          Aire limpio
+        </div>
+      </div>
+
+      <button class="boton-principal" onclick="comenzarJuego()">
+        🚀 Comenzar juego
+      </button>
+
+    </section>
+
+
+    <!-- PANTALLA DEL JUEGO -->
+    <section id="juego" class="pantalla oculto">
+
+      <div class="informacion">
+        <span id="numeroPregunta">Pregunta 1 de 10</span>
+        <span>⭐ Puntos: <strong id="puntaje">0</strong></span>
+      </div>
+
+      <div class="barra">
+        <div class="progreso" id="progreso"></div>
+      </div>
+
+      <div class="tarjeta">
+
+        <span class="categoria" id="categoria">♻️ Reciclaje</span>
+
+        <h2 class="pregunta" id="pregunta">
+          Pregunta
+        </h2>
+
+        <div class="opciones" id="opciones"></div>
+
+        <div id="feedback" class="feedback"></div>
+
+        <button
+          id="botonSiguiente"
+          class="siguiente"
+          onclick="siguientePregunta()">
+          Siguiente pregunta ➜
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- PANTALLA FINAL -->
+    <section id="resultado" class="pantalla resultado oculto">
+
+      <div class="resultado-icono" id="resultadoIcono">🌱</div>
+
+      <h2>¡Reto completado!</h2>
+
+      <div class="puntaje-final">
+        <p>Tu puntaje fue:</p>
+        <div class="numero">
+          <span id="puntajeFinal">0</span>/10
+        </div>
+      </div>
+
+      <p class="mensaje-final" id="mensajeFinal"></p>
+
+      <button class="boton-principal" onclick="volverAJugar()">
+        🔄 Volver a jugar
+      </button>
+
+    </section>
+
+  </main>
+
+
+  <script>
+
+    // PREGUNTAS DEL JUEGO
+    const preguntas = [
+
+      {
+        categoria: "♻️ Reciclaje",
+        pregunta: "¿Qué acción ayuda a reciclar correctamente?",
+        opciones: [
+          "Mezclar todos los residuos",
+          "Separar los residuos según su tipo",
+          "Tirar los residuos al suelo",
+          "Quemar los residuos"
+        ],
+        correcta: 1,
+        explicacion: "Separar los residuos facilita su aprovechamiento y reciclaje."
+      },
+
+      {
+        categoria: "🗑️ Reducción de residuos",
+        pregunta: "¿Cuál es una buena forma de producir menos residuos?",
+        opciones: [
+          "Usar productos desechables constantemente",
+          "Comprar más productos de los necesarios",
+          "Reutilizar objetos cuando sea posible",
+          "Tirar objetos que todavía sirven"
+        ],
+        correcta: 2,
+        explicacion: "Reutilizar permite aprovechar los objetos durante más tiempo y reducir la cantidad de residuos."
+      },
+
+      {
+        categoria: "💧 Cuidado del agua",
+        pregunta: "¿Qué debemos hacer mientras nos cepillamos los dientes?",
+        opciones: [
+          "Dejar el caño abierto",
+          "Cerrar el caño cuando no necesitamos agua",
+          "Dejar correr el agua durante todo el cepillado",
+          "Abrir varios caños"
+        ],
+        correcta: 1,
+        explicacion: "Cerrar el caño cuando no necesitamos agua ayuda a evitar su desperdicio."
+      },
+
+      {
+        categoria: "🌬️ Protección del aire",
+        pregunta: "¿Cuál de estas acciones ayuda a mantener un aire más limpio?",
+        opciones: [
+          "Quemar basura",
+          "Usar vehículos sin mantenimiento",
+          "Evitar la quema de residuos",
+          "Quemar hojas y plásticos"
+        ],
+        correcta: 2,
+        explicacion: "Evitar la quema de residuos ayuda a disminuir la contaminación del aire."
+      },
+
+      {
+        categoria: "♻️ Reciclaje",
+        pregunta: "¿Qué significa reutilizar?",
+        opciones: [
+          "Usar un objeto nuevamente para aprovecharlo",
+          "Tirar un objeto después de usarlo una vez",
+          "Quemar todos los objetos",
+          "Comprar objetos nuevos siempre"
+        ],
+        correcta: 0,
+        explicacion: "Reutilizar significa volver a utilizar un objeto para prolongar su vida útil."
+      },
+
+      {
+        categoria: "🗑️ Reducción de residuos",
+        pregunta: "¿Cuál es una buena alternativa para reducir el uso de productos descartables?",
+        opciones: [
+          "Usar una botella reutilizable",
+          "Comprar varias botellas descartables cada día",
+          "Tirar las botellas al suelo",
+          "Usar más bolsas de plástico"
+        ],
+        correcta: 0,
+        explicacion: "Una botella reutilizable puede utilizarse muchas veces y ayuda a reducir residuos."
+      },
+
+      {
+        categoria: "💧 Cuidado del agua",
+        pregunta: "¿Cuál de estas acciones ayuda a evitar la contaminación del agua?",
+        opciones: [
+          "Arrojar basura a los ríos",
+          "Verter sustancias contaminantes en el agua",
+          "No arrojar residuos a fuentes de agua",
+          "Tirar aceite por el desagüe"
+        ],
+        correcta: 2,
+        explicacion: "Evitar arrojar residuos y sustancias contaminantes protege las fuentes de agua."
+      },
+
+      {
+        categoria: "🌬️ Protección del aire",
+        pregunta: "¿Qué puede ayudar a disminuir la contaminación producida por los vehículos?",
+        opciones: [
+          "Usar medios de transporte sostenibles cuando sea posible",
+          "Mantener los vehículos encendidos sin necesidad",
+          "Usar vehículos sin mantenimiento",
+          "Quemar combustible innecesariamente"
+        ],
+        correcta: 0,
+        explicacion: "Caminar, usar bicicleta o compartir transporte cuando sea posible puede ayudar a reducir emisiones."
+      },
+
+      {
+        categoria: "🌱 Cuidado ambiental",
+        pregunta: "¿Por qué es importante reducir la cantidad de residuos que generamos?",
+        opciones: [
+          "Porque ayuda a disminuir la contaminación",
+          "Porque hace que haya más basura",
+          "Porque aumenta el desperdicio",
+          "Porque evita que reutilicemos objetos"
+        ],
+        correcta: 0,
+        explicacion: "Reducir los residuos ayuda a disminuir la contaminación y el uso innecesario de recursos."
+      },
+
+      {
+        categoria: "🌎 Cuidado ambiental",
+        pregunta: "¿Cuál es una actitud responsable frente al ambiente?",
+        opciones: [
+          "Dejar basura en espacios públicos",
+          "Desperdiciar agua",
+          "Cuidar los recursos y mantener limpios los espacios",
+          "Quemar residuos para eliminarlos"
+        ],
+        correcta: 2,
+        explicacion: "Cuidar los recursos y mantener limpios los espacios son acciones responsables con el ambiente."
+      }
+
+    ];
+
+
+    // VARIABLES DEL JUEGO
+    let preguntaActual = 0;
+    let puntaje = 0;
+    let respondida = false;
+
+
+    // COMENZAR
+    function comenzarJuego() {
+
+      preguntaActual = 0;
+      puntaje = 0;
+
+      document.getElementById("inicio").classList.add("oculto");
+      document.getElementById("resultado").classList.add("oculto");
+      document.getElementById("juego").classList.remove("oculto");
+
+      mostrarPregunta();
+    }
+
+
+    // MOSTRAR PREGUNTA
+    function mostrarPregunta() {
+
+      respondida = false;
+
+      const datos = preguntas[preguntaActual];
+
+      document.getElementById("numeroPregunta").textContent =
+        `Pregunta ${preguntaActual + 1} de ${preguntas.length}`;
+
+      document.getElementById("puntaje").textContent = puntaje;
+
+      document.getElementById("progreso").style.width =
+        `${((preguntaActual) / preguntas.length) * 100}%`;
+
+      document.getElementById("categoria").textContent =
+        datos.categoria;
+
+      document.getElementById("pregunta").textContent =
+        datos.pregunta;
+
+      const contenedorOpciones =
+        document.getElementById("opciones");
+
+      contenedorOpciones.innerHTML = "";
+
+      document.getElementById("feedback").className = "feedback";
+      document.getElementById("feedback").textContent = "";
+
+      document.getElementById("botonSiguiente").style.display = "none";
+
+      datos.opciones.forEach((opcion, indice) => {
+
+        const boton = document.createElement("button");
+
+        boton.className = "opcion";
+        boton.textContent =
+          `${String.fromCharCode(65 + indice)}. ${opcion}`;
+
+        boton.onclick = () => comprobarRespuesta(indice);
+
+        contenedorOpciones.appendChild(boton);
+
+      });
+    }
+
+
+    // COMPROBAR RESPUESTA
+    function comprobarRespuesta(indice) {
+
+      if (respondida) return;
+
+      respondida = true;
+
+      const datos = preguntas[preguntaActual];
+      const botones =
+        document.querySelectorAll(".opcion");
+
+      botones.forEach(boton => {
+        boton.disabled = true;
+      });
+
+      if (indice === datos.correcta) {
+
+        puntaje++;
+
+        botones[indice].classList.add("correcta");
+
+        mostrarFeedback(
+          true,
+          "¡Correcto! 🎉 " + datos.explicacion
+        );
+
+      } else {
+
+        botones[indice].classList.add("incorrecta");
+        botones[datos.correcta].classList.add("correcta");
+
+        mostrarFeedback(
+          false,
+          "Respuesta incorrecta. La respuesta correcta es: " +
+          datos.opciones[datos.correcta] +
+          ". " + datos.explicacion
+        );
+      }
+
+      document.getElementById("puntaje").textContent = puntaje;
+
+      document.getElementById("botonSiguiente").style.display =
+        "block";
+    }
+
+
+    // MOSTRAR RETROALIMENTACIÓN
+    function mostrarFeedback(esCorrecto, texto) {
+
+      const feedback =
+        document.getElementById("feedback");
+
+      feedback.textContent = texto;
+
+      if (esCorrecto) {
+        feedback.className = "feedback correcto";
+      } else {
+        feedback.className = "feedback incorrecto";
+      }
+    }
+
+
+    // SIGUIENTE PREGUNTA
+    function siguientePregunta() {
+
+      preguntaActual++;
+
+      if (preguntaActual < preguntas.length) {
+
+        mostrarPregunta();
+
+      } else {
+
+        mostrarResultado();
+
+      }
+    }
+
+
+    // RESULTADO FINAL
+    function mostrarResultado() {
+
+      document.getElementById("juego").classList.add("oculto");
+      document.getElementById("resultado").classList.remove("oculto");
+
+      document.getElementById("puntajeFinal").textContent =
+        puntaje;
+
+      let mensaje = "";
+      let icono = "";
+
+      if (puntaje === 10) {
+
+        icono = "🏆🌎";
+        mensaje =
+          "¡Excelente! Eres un gran defensor del ambiente. Tus conocimientos pueden ayudarte a tomar buenas decisiones para cuidar nuestro planeta.";
+
+      } else if (puntaje >= 7) {
+
+        icono = "🌱👏";
+        mensaje =
+          "¡Muy bien! Tienes buenos conocimientos ambientales. Sigue aprendiendo y poniendo en práctica acciones responsables.";
+
+      } else if (puntaje >= 5) {
+
+        icono = "♻️🙂";
+        mensaje =
+          "¡Buen esfuerzo! Ya conoces varias formas de cuidar el ambiente. Continúa aprendiendo para mejorar tu puntaje.";
+
+      } else {
+
+        icono = "🌍💚";
+        mensaje =
+          "Cada reto es una oportunidad para aprender. Repasa las preguntas e intenta nuevamente para descubrir más formas de cuidar el ambiente.";
+
+      }
+
+      document.getElementById("resultadoIcono").textContent =
+        icono;
+
+      document.getElementById("mensajeFinal").textContent =
+        mensaje;
+    }
+
+
+    // VOLVER A JUGAR
+    function volverAJugar() {
+
+      document.getElementById("resultado").classList.add("oculto");
+      document.getElementById("inicio").classList.remove("oculto");
+
+    }
+
+  </script>
+
+</body>
+</html>
